@@ -1,0 +1,7 @@
+{
+  "name": "vozApp",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
