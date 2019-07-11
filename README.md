@@ -1,7 +1,13 @@
 # Proyecto_distribuido
 Aplicación movil con reconocimiento de voz
 
-instalación previa de nodejs, angular e ionic
+Instalación previa de:
+* nodejs
+* angular
+* ionic
 
-ejecutar en computador con: ionic serve
-    en movil con: ionic serve --devapp
+Ejecutar en computador con: 
+* ionic serve
+
+Y en movil con: 
+* ionic serve --devapp
