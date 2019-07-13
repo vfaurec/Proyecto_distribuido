@@ -11,45 +11,39 @@
     <ion-card class="welcome-card">
         <img src="https://image.freepik.com/foto-gratis/retro-microfono-aislado-fondo-color_1387-912.jpg" alt="" />
         <ion-card-content>
-          <p>A continuación se encuentran distintos botones que permitiran grabar, escuchar, eliminar y enviar el audio para obtener la información requerida.</p>
+          <p>En esta vista puedes grabar, escuchar, borrar y enviar el audio. Se envía con el fin de obtener la información necesaria segun el registro específico.
+          </p>
         </ion-card-content>
     </ion-card>
 
     <ion-card>
         <ion-card-content>
           <ion-card-title>
-            <button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>
-            <button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>
+            <button ion-button primary (click)="stopRecord()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Detener Grabacion</button>
+            <button ion-button primary (click)="startRecord()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Grabar Audio</button>
           </ion-card-title>
         </ion-card-content>
       </ion-card>
       <ion-list>
         <ion-item *ngFor="let audio of mediaFiles; index as i;">
-          <p>{{audio.filename}}</p>
-          <button ion-button clear item-end large (click)="playAudio(audio.filename, i)"><ion-icon name="play"></ion-icon></button>
+          <p>Audio {{i+1}}</p>
+          
+          <button ion-button icon-start (click)="playAudio(audio.filename, i)">
+            <ion-icon name="play"></ion-icon>
+          </button>
+
+
+          <button ion-button>
+            <ion-icon name='md-trash' is-active="false"></ion-icon>
+          </button>
+        
+          <button ion-button>
+              <ion-icon name='md-send' is-active="false"></ion-icon>
+            </button>
+          
+
         </ion-item>
       </ion-list>
   
-    <p>
-        <button ion-button icon-start full (click) = "captureAudio()">
-          <ion-icon name='md-recording'></ion-icon>
-          Grabar
-        </button>
-    </p>
-
-    <p>
-        <button ion-button icon-start>
-            <ion-icon name='md-trash' is-active="false"></ion-icon>
-            Eliminar
-        </button>
-    </p>
-
-    <p>
-        <button ion-button icon-start>
-            <ion-icon name='md-send' is-active="false"></ion-icon>
-            Enviar
-        </button>
-    </p>
-
 
 </ion-content>
