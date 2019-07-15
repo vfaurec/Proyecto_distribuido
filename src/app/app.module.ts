@@ -13,6 +13,9 @@ import { Media } from '@ionic-native/media/ngx';
 import { MediaCapture } from '@ionic-native/media-capture/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { IonicStorageModule } from '@ionic/storage';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiService } from './service/api.service';
+
 
 
 @NgModule({
@@ -22,6 +25,7 @@ import { IonicStorageModule } from '@ionic/storage';
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,
+    HttpClientModule,
     IonicStorageModule.forRoot()
   ],
   providers: [
@@ -30,8 +34,8 @@ import { IonicStorageModule } from '@ionic/storage';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Media,
     MediaCapture,
-    File
-    
+    File,
+    ApiService
   ],
   bootstrap: [AppComponent]
 })

@@ -33,11 +33,11 @@
           </button>
 
 
-          <button ion-button>
+          <button ion-button (click)="deleteFile(audio)">
             <ion-icon name='md-trash' is-active="false"></ion-icon>
           </button>
         
-          <button ion-button>
+          <button ion-button (click)="sendFile(audio)" >
               <ion-icon name='md-send' is-active="false"></ion-icon>
             </button>
           

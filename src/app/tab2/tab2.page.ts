@@ -4,8 +4,7 @@ import { MediaObject, Media } from '@ionic-native/media/ngx';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { Platform, NavController } from '@ionic/angular';
-
-
+import { HttpClient } from '@angular/common/http';
 
 const MEDIA_FILES_KEY = 'mediaFiles';
 @Component({
@@ -20,13 +19,16 @@ export class Tab2Page {
   fileName: string;
   audio: MediaObject;
   mediaFiles : any[] = [];
+  APIURL : string = 'http://34.67.11.100:8000/rest';
+
   constructor(
     public navCtr : NavController,
     public platform : Platform,
     private mediaCapture: MediaCapture, 
     private storage: Storage, 
     private file: File, 
-    private media: Media
+    private media: Media,
+    private http: HttpClient
     
   ) {}
 
@@ -36,6 +38,13 @@ export class Tab2Page {
     })
   }
 
+  sendFile(file){
+
+    //return this.http.post<File>(this.APIURL, file);
+    console.log(this.http);
+
+  }
+
   ionViewWillEnter() {
     this.getAudioList();
   }
@@ -43,7 +52,7 @@ export class Tab2Page {
   getAudioList() {
     if(localStorage.getItem("mediaFiles")) {
       this.mediaFiles = JSON.parse(localStorage.getItem("mediaFiles"));
-      console.log(this.mediaFiles);
+      //console.log(this.mediaFiles);
     }
   }
 
@@ -73,6 +82,10 @@ export class Tab2Page {
     this.getAudioList();
   }
 
+  deteleFile(file) {
+    this.file.removeFile(this.filePath, this.fileName);
+  }
+
   playAudio(file,idx) {
     if (this.platform.is('ios')) {
       this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
@@ -89,14 +102,6 @@ export class Tab2Page {
     this.mediaCapture.captureAudio().then(res => {
       this.storeMediaFiles(res);
     }, (err: CaptureError) => console.error(err));
-  }
- 
-  
-  play(myFile) {
-    if (myFile.name.indexOf('.3gp') > -1) {
-      const audioFile : MediaObject = this.media.create(myFile.localURL);
-      audioFile.play();
-    }
   }
  
   storeMediaFiles(files) {
