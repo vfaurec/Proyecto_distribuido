@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { Platform, NavController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../service/api.service';
 
 const MEDIA_FILES_KEY = 'mediaFiles';
 @Component({
@@ -28,7 +29,8 @@ export class Tab2Page {
     private storage: Storage, 
     private file: File, 
     private media: Media,
-    private http: HttpClient
+    private http: HttpClient,
+    private ApiService : ApiService
     
   ) {}
 
@@ -40,8 +42,7 @@ export class Tab2Page {
 
   sendFile(file){
 
-    //return this.http.post<File>(this.APIURL, file);
-    console.log(this.http);
+    this.ApiService.sendPost(file);    
 
   }
 
@@ -58,15 +59,13 @@ export class Tab2Page {
 
   startRecord() {
     
-    this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';    
+    this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.wav';    
     if (this.platform.is('ios')) {
       this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileName;
     } else if (this.platform.is('android')) {
       this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
     } else {
-      console.log('entroAqui');
-      console.log(this.file.externalDataDirectory);
-      //this.filePath = this.file.dataDirectory.replace() + this.fileName;
+      //console.log(this.file.externalDataDirectory);
     }
     this.audio = this.media.create(this.filePath);
     this.audio.startRecord();
