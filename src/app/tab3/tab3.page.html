@@ -6,31 +6,12 @@
  
 <ion-content>
 
-  <ion-card class="welcome-card">
-      <ion-card-header>
-          <h2>{{ genero | uppercase }}</h2>
-      </ion-card-header>
-    <img src="https://www.infobae.com/new-resizer/DSVVYey_rK7IGqxpGHnANMYvmoY=/750x0/filters:quality(100)/s3.amazonaws.com/arc-wordpress-client-uploads/infobae-wp/wp-content/uploads/2018/04/05152021/mapache-zombie-8.jpg" alt="" />
-    <ion-card-content>
-      
-      <h4>{{ edad | uppercase }}</h4>
-      
-    </ion-card-content>
-
-    <ion-avatar item-start>
-      <!-- <img [src]="nombreEstructura.picture.medium"> -->
-    </ion-avatar>
-    
-  </ion-card>
-
-  <ion-list>
-      <ion-item *ngFor="let user of users">
-        <ion-avatar item-start>
-          <img [src]="user.picture.medium">
-        </ion-avatar>
-        <h2>{{ user.name.first | uppercase }}</h2>
-        <p>{{ user.email }}</p>
-      </ion-item>
-    </ion-list>
+    <ion-card class="information-card">
+        <img src="../../assets/avatar2/Hombre-Niño.png" alt="" />
+        <ion-card-content>
+          <p>{{ genero | uppercase }}</p>
+          <p>{{ edad | uppercase }}</p>
+        </ion-card-content>
+    </ion-card>
 
 </ion-content>

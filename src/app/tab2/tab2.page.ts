@@ -29,7 +29,6 @@ export class Tab2Page {
     private storage: Storage, 
     private file: File, 
     private media: Media,
-    private http: HttpClient,
     private ApiService : ApiService
     
   ) {}
