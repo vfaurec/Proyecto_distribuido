@@ -7,15 +7,7 @@
 </ion-header>
 
 <ion-content padding>
-
-    <ion-card class="welcome-card">
-        <img src="https://image.freepik.com/foto-gratis/retro-microfono-aislado-fondo-color_1387-912.jpg" alt="" />
-        <ion-card-content>
-          <p>En esta vista puedes grabar, escuchar, borrar y enviar el audio. Se envía con el fin de obtener la información necesaria segun el registro específico.
-          </p>
-        </ion-card-content>
-    </ion-card>
-
+  
     <ion-card>
         <ion-card-content>
           <ion-card-title>
@@ -31,7 +23,7 @@
           
           <p>Audio {{i+1}}</p>
               
-          <ion-button icon-start (click)="playAudio(audio.filename, i)">
+          <ion-button icon-start (click)="playAudio(audio.filename)">
               <ion-icon name="play-circle"></ion-icon>
           </ion-button>
 

@@ -15,8 +15,7 @@ import { File } from '@ionic-native/file/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from './service/api.service';
-
-
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +25,7 @@ import { ApiService } from './service/api.service';
     IonicModule.forRoot(), 
     AppRoutingModule,
     HttpClientModule,
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
   ],
   providers: [
     StatusBar,
@@ -35,7 +34,8 @@ import { ApiService } from './service/api.service';
     Media,
     MediaCapture,
     File,
-    ApiService
+    ApiService,
+    FileTransfer,  
   ],
   bootstrap: [AppComponent]
 })

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core'
-import { CaptureError,MediaCapture } from '@ionic-native/media-capture/ngx';
 import { MediaObject, Media } from '@ionic-native/media/ngx';
 import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
-import { Platform, NavController } from '@ionic/angular';
-import { HttpClient } from '@angular/common/http';
+import { Platform, NavController, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../service/api.service';
+import { MediaCapture } from '@ionic-native/media-capture/ngx';
+
 
 const MEDIA_FILES_KEY = 'mediaFiles';
 @Component({
@@ -20,17 +20,17 @@ export class Tab2Page {
   fileName: string;
   audio: MediaObject;
   mediaFiles : any[] = [];
-  APIURL : string = 'http://34.67.11.100:8000/rest';
 
   constructor(
-    public navCtr : NavController,
+    public navCtrl : NavController,
     public platform : Platform,
-    private mediaCapture: MediaCapture, 
     private storage: Storage, 
     private file: File, 
     private media: Media,
-    private ApiService : ApiService
-    
+    private mediaCapture : MediaCapture,
+    private ApiService : ApiService,
+    private alertController : AlertController,
+    public modalController : ModalController    
   ) {}
 
   ionViewDidLoad() {
@@ -41,8 +41,44 @@ export class Tab2Page {
 
   sendFile(file){
 
-    this.ApiService.sendPost(file);    
+        //this.presentAlertLoading();
+        this.ApiService.upload(file.filename);
+  }
 
+  async presentAlertLoading() {
+    const alertController = document.querySelector('ion-alert-controller');
+    await alertController.componentOnReady();
+  
+    const alert = await alertController.create({
+      header: 'Enviando audio',
+      subHeader: '',
+      message: 'Espere, por favor.',
+    });
+    return await alert.present();
+  }
+
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Eliminar Audio',
+      message: 'Message <strong>Desea eliminar el archivo?</strong>!!!',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Sí',
+          handler: () => {
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   ionViewWillEnter() {
@@ -52,8 +88,39 @@ export class Tab2Page {
   getAudioList() {
     if(localStorage.getItem("mediaFiles")) {
       this.mediaFiles = JSON.parse(localStorage.getItem("mediaFiles"));
-      //console.log(this.mediaFiles);
     }
+  }
+ 
+  captureAudio() {
+    this.mediaCapture.captureAudio().then(res => {
+      this.storeMediaFiles(res);
+    });
+  }
+
+  storeMediaFiles(files) {
+    this.storage.get(MEDIA_FILES_KEY).then(res => {
+      if (res) {
+        let arr = JSON.parse(res);
+        arr = arr.concat(files);
+        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(arr));
+      } else {
+        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(files))
+      }
+      this.mediaFiles = this.mediaFiles.concat(files);
+    })
+  }
+
+  playAudio(file,idx) {
+
+    if (this.platform.is('ios')) {
+      this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
+      this.audio = this.media.create(this.filePath);
+    } else if (this.platform.is('android')) {      
+      this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
+      this.audio = this.media.create(this.filePath);
+    }
+    this.audio.play();
+    this.audio.setVolume(0.8);
   }
 
   startRecord() {
@@ -64,7 +131,7 @@ export class Tab2Page {
     } else if (this.platform.is('android')) {
       this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
     } else {
-      //console.log(this.file.externalDataDirectory);
+      this.filePath = this.file.tempDirectory + this.fileName;
     }
     this.audio = this.media.create(this.filePath);
     this.audio.startRecord();
@@ -80,39 +147,31 @@ export class Tab2Page {
     this.getAudioList();
   }
 
-  deteleFile(file) {
-    this.file.removeFile(this.filePath, this.fileName);
+  deleteFile(file){
+
+
+    this.file = file;
+    this.file.removeFile(this.ApiService.storage+file.filename, file.filename).then( data => {
+      console.log('file removed: ', this.file);
+      data.fileRemoved.getMetadata(function (metadata) {
+          let name = data.fileRemoved.name;
+          let size = metadata.size ;
+          let fullPath = data.fileRemoved.fullPath;
+          console.log('Deleted file: ', name, size, fullPath) ;
+          console.log('Name: ' + name + ' / Size: ' + size) ;
+      }) ;
+  }).catch( error => {
+      file.getMetadata(function (metadata) {
+          let name = file.name ;
+          let size = metadata.size ;
+          console.log('Error deleting file from cache folder: ', error) ;
+          console.log('Name: ' + name + ' / Size: ' + size) ;
+      }) ;
+  });
   }
 
-  playAudio(file,idx) {
-    if (this.platform.is('ios')) {
-      this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
-      this.audio = this.media.create(this.filePath);
-    } else if (this.platform.is('android')) {
-      this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
-      this.audio = this.media.create(this.filePath);
-    }
-    this.audio.play();
-    this.audio.setVolume(0.8);
-  }
   
-  captureAudio() {
-    this.mediaCapture.captureAudio().then(res => {
-      this.storeMediaFiles(res);
-    }, (err: CaptureError) => console.error(err));
-  }
- 
-  storeMediaFiles(files) {
-    this.storage.get(MEDIA_FILES_KEY).then(res => {
-      if (res) {
-        let arr = JSON.parse(res);
-        arr = arr.concat(files);
-        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(arr));
-      } else {
-        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(files))
-      }
-      this.mediaFiles = this.mediaFiles.concat(files);
-    })
-  }
+
+
 
 }
