@@ -23,15 +23,16 @@ export class ApiService {
     return this.http.get( this.api+'/rest/?format=json');
   }
   
-  upload(fileName) {
+  upload(file) {
     let options: FileUploadOptions = {
        fileKey: 'file',
-       fileName: fileName,
+       fileName: file,
        chunkedMode:false,
+       mimeType: 'audio/wav',
        headers: {}
     }
-  
-    this.fileTransfer.upload( this.storage + fileName, this.api+ '/upload/', options)
+   
+      this.fileTransfer.upload( this.storage+file, this.api+ '/upload/', options)
      .then((data) => {
       console.log(data);
        // success    
@@ -39,6 +40,6 @@ export class ApiService {
       console.log(err);
        // error
      });
-  }
+    }
 
 }

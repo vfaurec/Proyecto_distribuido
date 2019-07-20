@@ -4,7 +4,6 @@ import { Storage } from '@ionic/storage';
 import { File } from '@ionic-native/file/ngx';
 import { Platform, NavController, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../service/api.service';
-import { MediaCapture } from '@ionic-native/media-capture/ngx';
 
 
 const MEDIA_FILES_KEY = 'mediaFiles';
@@ -13,8 +12,10 @@ const MEDIA_FILES_KEY = 'mediaFiles';
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
+
 export class Tab2Page {
 
+  
   recording: boolean = false;
   filePath: string;
   fileName: string;
@@ -27,7 +28,6 @@ export class Tab2Page {
     private storage: Storage, 
     private file: File, 
     private media: Media,
-    private mediaCapture : MediaCapture,
     private ApiService : ApiService,
     private alertController : AlertController,
     public modalController : ModalController    
@@ -39,9 +39,11 @@ export class Tab2Page {
     })
   }
 
+  
   sendFile(file){
 
-        //this.presentAlertLoading();
+  
+      console.log(file.getFormatData);
         this.ApiService.upload(file.filename);
   }
 
@@ -85,18 +87,13 @@ export class Tab2Page {
     this.getAudioList();
   }
  
+
   getAudioList() {
     if(localStorage.getItem("mediaFiles")) {
       this.mediaFiles = JSON.parse(localStorage.getItem("mediaFiles"));
     }
   }
  
-  captureAudio() {
-    this.mediaCapture.captureAudio().then(res => {
-      this.storeMediaFiles(res);
-    });
-  }
-
   storeMediaFiles(files) {
     this.storage.get(MEDIA_FILES_KEY).then(res => {
       if (res) {
@@ -109,31 +106,35 @@ export class Tab2Page {
       this.mediaFiles = this.mediaFiles.concat(files);
     })
   }
+  stopAudio() {
+    this.audio.stop();
+  }
 
   playAudio(file,idx) {
 
-    if (this.platform.is('ios')) {
-      this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
-      this.audio = this.media.create(this.filePath);
-    } else if (this.platform.is('android')) {      
-      this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
-      this.audio = this.media.create(this.filePath);
+   // this.playing = true;
+   if (this.platform.is('ios')) {
+    this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
+    this.audio = this.media.create(this.filePath);
+    } else if (this.platform.is('android')) {
+        this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
+        this.audio = this.media.create(this.filePath);
     }
     this.audio.play();
     this.audio.setVolume(0.8);
   }
 
   startRecord() {
-    
-    this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.wav';    
+   
     if (this.platform.is('ios')) {
+      this.fileName = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.wav';
       this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileName;
+      this.audio = this.media.create(this.filePath);
     } else if (this.platform.is('android')) {
-      this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
-    } else {
-      this.filePath = this.file.tempDirectory + this.fileName;
+        this.fileName = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.wav';
+        this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
+        this.audio = this.media.create(this.filePath);
     }
-    this.audio = this.media.create(this.filePath);
     this.audio.startRecord();
     this.recording = true;
   }
