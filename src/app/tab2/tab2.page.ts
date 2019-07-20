@@ -5,6 +5,8 @@ import { File } from '@ionic-native/file/ngx';
 import { Platform, NavController, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../service/api.service';
 
+import { Router } from '@angular/router';
+
 
 const MEDIA_FILES_KEY = 'mediaFiles';
 @Component({
@@ -28,9 +30,9 @@ export class Tab2Page {
     private storage: Storage, 
     private file: File, 
     private media: Media,
-    private ApiService : ApiService,
     private alertController : AlertController,
-    public modalController : ModalController    
+    public modalController : ModalController,
+    private router: Router
   ) {}
 
   ionViewDidLoad() {
@@ -42,9 +44,7 @@ export class Tab2Page {
   
   sendFile(file){
 
-  
-      console.log(file.getFormatData);
-        this.ApiService.upload(file.filename);
+    this.router.navigate(['tab4',file.filename]);
   }
 
   async presentAlertLoading() {
@@ -147,32 +147,5 @@ export class Tab2Page {
     this.recording = false;
     this.getAudioList();
   }
-
-  deleteFile(file){
-
-
-    this.file = file;
-    this.file.removeFile(this.ApiService.storage+file.filename, file.filename).then( data => {
-      console.log('file removed: ', this.file);
-      data.fileRemoved.getMetadata(function (metadata) {
-          let name = data.fileRemoved.name;
-          let size = metadata.size ;
-          let fullPath = data.fileRemoved.fullPath;
-          console.log('Deleted file: ', name, size, fullPath) ;
-          console.log('Name: ' + name + ' / Size: ' + size) ;
-      }) ;
-  }).catch( error => {
-      file.getMetadata(function (metadata) {
-          let name = file.name ;
-          let size = metadata.size ;
-          console.log('Error deleting file from cache folder: ', error) ;
-          console.log('Name: ' + name + ' / Size: ' + size) ;
-      }) ;
-  });
-  }
-
-  
-
-
 
 }

@@ -6,8 +6,15 @@ Instalación previa de:
 * angular
 * ionic
 
-Ejecutar en computador con: 
-* ionic serve
+Plugins necesarios
 
-Y en movil con: 
+ionic cordova plugin add cordova-plugin-media-capture
+ionic cordova plugin add cordova-plugin-media
+ionic cordova plugin add cordova-plugin-file
+
+Librerias
+
+npm i @ionic-native/media-capture @ionic-native/media @ionic-native/file @ionic/storage
+
+Ejecutar en movil con la aplicación DevApp: 
 * ionic serve --devapp
